@@ -14,28 +14,35 @@ class App extends Component {
     }
 
     handleAdd = async () => {
+        const { posts } = this.state;
+
         const obj = { title: "Title", body: "Body" };
         const { data: post } = await http.post(apiURL, obj);
-        const posts = [post, ...this.state.posts];
+        const posts = [post, ...posts];
         this.setState({ posts });
     };
 
     handleUpdate = async (post) => {
+        const { posts } = this.state;
+
         post.title = "Updated";
-        await http.put(apiURL + "/" + post.id);
-        const posts = [...this.state.posts];
+        await http.put(`${apiURL}/${post.id}`);
+        const posts = [...posts];
         const index = posts.indexOf(post);
         posts[index] = { ...post };
         this.setState({ posts });
     };
 
     handleDelete = async (post) => {
-        const posts = this.state.posts.filter((p) => p.id !== post.id);
+        const { posts } = this.state;
+
+        const originalPosts = [...posts];
+
+        const posts = posts.filter((p) => p.id !== post.id);
         this.setState({ posts });
 
-        const originalPosts = [...this.state.posts];
         try {
-            await http.delete("n" + apiURL + "/" + post.id);
+            await http.delete(`${apiURL}/${post.id}`);
         } catch (error) {
             if (error.response && error.response.status === 404) {
                 alert("This Post Has Been Already Deleted!");
