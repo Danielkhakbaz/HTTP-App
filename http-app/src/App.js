@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
+import http from "./Services/HttpService";
 import config from "./Config.json";
 import "./App.css";
 
@@ -9,20 +9,20 @@ class App extends Component {
     };
 
     async componentDidMount() {
-        const { data: posts } = await axios.get(config.apiURL);
+        const { data: posts } = await http.get(config.apiURL);
         this.setState({ posts });
     }
 
     handleAdd = async () => {
         const obj = { title: "Title", body: "Body" };
-        const { data: post } = await axios.post(config.apiURL, obj);
+        const { data: post } = await http.post(config.apiURL, obj);
         const posts = [post, ...this.state.posts];
         this.setState({ posts });
     };
 
     handleUpdate = async (post) => {
         post.title = "Updated";
-        await axios.put(config.apiURL + "/" + post.id);
+        await http.put(config.apiURL + "/" + post.id);
         const posts = [...this.state.posts];
         const index = posts.indexOf(post);
         posts[index] = { ...post };
@@ -33,7 +33,15 @@ class App extends Component {
         const posts = this.state.posts.filter((p) => p.id !== post.id);
         this.setState({ posts });
 
-        await axios.delete(config.apiURL + "/" + post.id);
+        const originalPosts = [...this.state.posts];
+        try {
+            await http.delete("n" + config.apiURL + "/" + post.id);
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                alert("This Post Has Been Already Deleted!");
+            }
+            this.setState({ posts: originalPosts });
+        }
     };
 
     render() {
