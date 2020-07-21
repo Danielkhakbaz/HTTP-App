@@ -4,6 +4,7 @@ import App from "./App";
 import registerServiceWorker from "./registerServiceWorker";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.css";
+import "react-toastify/dist/ReactToastify.css";
 
 ReactDOM.render(<App />, document.getElementById("root"));
 registerServiceWorker();
