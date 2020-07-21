@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import http from "./Services/HttpService";
-import config from "./Config.json";
+import { apiURL } from "./Config.json";
 import { ToastContainer } from "react-toastify";
-import "./App.css";
 
 class App extends Component {
     state = {
@@ -10,20 +9,20 @@ class App extends Component {
     };
 
     async componentDidMount() {
-        const { data: posts } = await http.get(config.apiURL);
+        const { data: posts } = await http.get(apiURL);
         this.setState({ posts });
     }
 
     handleAdd = async () => {
         const obj = { title: "Title", body: "Body" };
-        const { data: post } = await http.post(config.apiURL, obj);
+        const { data: post } = await http.post(apiURL, obj);
         const posts = [post, ...this.state.posts];
         this.setState({ posts });
     };
 
     handleUpdate = async (post) => {
         post.title = "Updated";
-        await http.put(config.apiURL + "/" + post.id);
+        await http.put(apiURL + "/" + post.id);
         const posts = [...this.state.posts];
         const index = posts.indexOf(post);
         posts[index] = { ...post };
@@ -36,7 +35,7 @@ class App extends Component {
 
         const originalPosts = [...this.state.posts];
         try {
-            await http.delete("n" + config.apiURL + "/" + post.id);
+            await http.delete("n" + apiURL + "/" + post.id);
         } catch (error) {
             if (error.response && error.response.status === 404) {
                 alert("This Post Has Been Already Deleted!");
@@ -49,7 +48,10 @@ class App extends Component {
         return (
             <React.Fragment>
                 <ToastContainer />
-                <button className="btn btn-primary" onClick={this.handleAdd}>
+                <button
+                    className="my-2 btn btn-primary"
+                    onClick={this.handleAdd}
+                >
                     Add
                 </button>
                 <table className="table">
