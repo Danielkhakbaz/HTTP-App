@@ -1,53 +1,53 @@
 import React, { Component } from "react";
-import http from "./Services/HttpService";
-import { apiURL } from "./Config.json";
+import Http from "./Services/HttpService";
+import { ApiURL } from "./Config.json";
 import { ToastContainer } from "react-toastify";
 
 class App extends Component {
     state = {
-        posts: [],
+        Posts: [],
     };
 
     async componentDidMount() {
-        const { data: posts } = await http.get(apiURL);
-        this.setState({ posts });
+        const { data: Posts } = await Http.get(ApiURL);
+        this.setState({ Posts });
     }
 
     handleAdd = async () => {
-        const { posts } = this.state;
+        const { Posts } = this.state;
 
-        const obj = { title: "Title", body: "Body" };
-        const { data: post } = await http.post(apiURL, obj);
-        const posts = [post, ...posts];
-        this.setState({ posts });
+        const Obj = { title: "Title", body: "Body" };
+        const { data: Post } = await Http.post(ApiURL, Obj);
+        const AllPosts = [Post, ...Posts];
+        this.setState({ Posts: AllPosts });
     };
 
     handleUpdate = async (post) => {
-        const { posts } = this.state;
+        const { Posts } = this.state;
 
         post.title = "Updated";
-        await http.put(`${apiURL}/${post.id}`);
-        const posts = [...posts];
-        const index = posts.indexOf(post);
-        posts[index] = { ...post };
-        this.setState({ posts });
+        await Http.put(`${ApiURL}/${post.id}`);
+        const AllPosts = [...Posts];
+        const index = AllPosts.indexOf(post);
+        AllPosts[index] = { ...post };
+        this.setState({ Posts: AllPosts });
     };
 
     handleDelete = async (post) => {
-        const { posts } = this.state;
+        const { Posts } = this.state;
 
-        const originalPosts = [...posts];
+        const originalPosts = [...Posts];
 
-        const posts = posts.filter((p) => p.id !== post.id);
-        this.setState({ posts });
+        const AllPosts = Posts.filter((p) => p.id !== post.id);
+        this.setState({ Posts: AllPosts });
 
         try {
-            await http.delete(`${apiURL}/${post.id}`);
+            await Http.delete(`${ApiURL}/${post.id}`);
         } catch (error) {
             if (error.response && error.response.status === 404) {
                 alert("This Post Has Been Already Deleted!");
             }
-            this.setState({ posts: originalPosts });
+            this.setState({ Posts: originalPosts });
         }
     };
 
@@ -70,7 +70,7 @@ class App extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.posts.map((post) => (
+                        {this.state.Posts.map((post) => (
                             <tr key={post.id}>
                                 <td>{post.title}</td>
                                 <td>
